@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/control_board_nav_graph"
+    app:startDestination="@id/levelSelectionFragment">
+
+    <fragment
+        android:id="@+id/highLevelFragment"
+        android:name="ru.sfti.go1ctl.high_level.HighLevelFragment"
+        android:label="fragment_high_level"
+        tools:layout="@layout/fragment_high_level" >
+        <action
+            android:id="@+id/gamepad_route"
+            app:destination="@id/gamepadActivity" />
+    </fragment>
+    <fragment
+        android:id="@+id/lowLevelFragment"
+        android:name="ru.sfti.go1ctl.low_level.LowLevelFragment"
+        android:label="fragment_low_level"
+        tools:layout="@layout/fragment_low_level" >
+        <action
+            android:id="@+id/joint_control_route"
+            app:destination="@id/jointControlActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/gamepadActivity"
+        android:name="ru.sfti.go1ctl.high_level.GamepadActivity"
+        android:label="GamepadActivity" />
+    <activity
+        android:id="@+id/jointControlActivity"
+        android:name="ru.sfti.go1ctl.low_level.JointControlActivity"
+        android:label="JointControlActivity" />
+    <fragment
+        android:id="@+id/levelSelectionFragment"
+        android:name="ru.sfti.go1ctl.LevelSelectionFragment"
+        android:label="fragment_level_selection"
+        tools:layout="@layout/fragment_level_selection" >
+        <action
+            android:id="@+id/high_level_route"
+            app:destination="@id/highLevelFragment"
+            app:enterAnim="@android:anim/fade_in" />
+        <action
+            android:id="@+id/low_level_route"
+            app:destination="@id/lowLevelFragment"
+            app:enterAnim="@android:anim/fade_in" />
+    </fragment>
+</navigation>

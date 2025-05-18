@@ -1,0 +1,6 @@
+<resources>
+
+    <style name="Widget.Theme.Go1ctl.MyView" parent="">
+        <item name="android:background">@color/gray_600</item>
+    </style>
+</resources>
