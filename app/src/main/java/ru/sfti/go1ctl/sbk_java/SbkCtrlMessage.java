@@ -1,8 +1,12 @@
 package ru.sfti.go1ctl.sbk_java;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 public class SbkCtrlMessage
@@ -18,25 +22,38 @@ public class SbkCtrlMessage
     protected int _crc;
     protected boolean _update;
 
-    private ByteBuffer _int32;
-    private ByteBuffer _float32;
+    private static final int    _PORT          = 8082;
+    private static final String _WIFI_ADDR_STR = "192.168.12.195";
+
+    private static InetAddress _WIFI_ADDR;
 
 
-    protected
-    SbkCtrlMessage(int size, byte level, int crcOff)
+    static
     {
+        try {
+            _WIFI_ADDR = InetAddress.getByName(_WIFI_ADDR_STR);
+        } catch (UnknownHostException e) {
+            Log.println(Log.ERROR, _TAG, "Unknown host: " + _WIFI_ADDR_STR);
+        }
+    }
+
+
+    public SbkCtrlMessage(int size, byte level, int crcOff)
+    {
+        super(size);
+
         this._SIZE    = size;
         this._CRC_OFF = crcOff;
-
-        this._packetBuffer = new byte[_SIZE];
 
         this._packetBuffer[_HDR_OFF]   = _HDR[0];
         this._packetBuffer[_HDR_OFF+1] = _HDR[1];
 
         this._packetBuffer[_LEVEL_OFF] = level;
+        this._updateCrc32();
 
-        this._int32 = ByteBuffer.allocate(4);
-        this._float32 = ByteBuffer.allocate(4);
+        this._packet = new DatagramPacket(this._packetBuffer, _SIZE);
+        this._packet.setAddress(_WIFI_ADDR);
+        this._packet.setPort(_PORT);
     }
 
 
@@ -56,7 +73,7 @@ public class SbkCtrlMessage
     {
         if (_update) {
             this._updateCrc32();
-            this._packet = new DatagramPacket(this._packetBuffer, _SIZE);
+            this._packet.setData(this._packetBuffer);
         }
 
         return this._packet;
@@ -67,29 +84,51 @@ public class SbkCtrlMessage
     _updateCrc32()
     {
         int crc = this._genCrc32();
-        byte[] crcBytes = _intToInt32(crc);
-
-        this._packetBuffer[this._CRC_OFF]   = crcBytes[3];
-        this._packetBuffer[this._CRC_OFF+1] = crcBytes[2];
-        this._packetBuffer[this._CRC_OFF+2] = crcBytes[1];
-        this._packetBuffer[this._CRC_OFF+3] = crcBytes[0];
-
+        this._copy(crc, _CRC_OFF);
         this._update = false;
     }
 
+
     protected byte[]
-    _intToInt32(int x) {
-        this._int32.putInt(x);
-        this._int32.rewind();
-        return this._int32.array();
+    _toDword(int x)
+    {
+        this._dword.putInt(x);
+        this._dword.rewind();
+        return this._dword.array();
     }
 
     protected byte[]
-    _floatToFloat32(float x) {
-        this._float32.putFloat(x);
-        this._float32.rewind();
-        return this._float32.array();
+    _toDword(float x)
+    {
+        this._dword.putFloat(x);
+        this._dword.rewind();
+        return this._dword.array();
     }
+
+
+    protected void
+    _copy(int x, int off)
+    {
+        byte[] x32 = this._toDword(x);
+        this._copyDword(x32, off);
+    }
+
+    protected void
+    _copy(float x, int off)
+    {
+        byte[] x32 = this._toDword(x);
+        this._copyDword(x32, off);
+    }
+
+    protected void
+    _copyDword(byte[] dword, int off)
+    {
+        this._packetBuffer[off]     = dword[3];
+        this._packetBuffer[off + 1] = dword[2];
+        this._packetBuffer[off + 2] = dword[1];
+        this._packetBuffer[off + 3] = dword[0];
+    }
+
 
     protected int
     _genCrc32()
@@ -112,6 +151,7 @@ public class SbkCtrlMessage
             }
         }
 
+        Log.println(Log.WARN, _TAG, Integer.toHexString(crc));
         return crc;
     }
 }

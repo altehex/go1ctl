@@ -2,7 +2,7 @@ package ru.sfti.go1ctl.sbk_java;
 
 public class SbkLowFbMessage
         extends SbkFbMessage {
-    public int SIZE = 807;
+    public static final int SIZE = 807;
 
     private int[] _serialNumber;
     private int[] _version;
@@ -17,9 +17,15 @@ public class SbkLowFbMessage
     public SbkJoystick joystick;
 
 
-    public SbkLowFbMessage() { }
+    public SbkLowFbMessage() {
+        super(SIZE);
+    }
 
     public SbkLowFbMessage(byte[] packet) {
+        super(SIZE);
+
+        if (packet.length != SIZE) return;
+
         this._packetBuffer = packet;
         this._deserialize();
     }

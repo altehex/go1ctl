@@ -49,4 +49,5 @@
     <string name="control_board_tab_name">Control board</string>
     <string name="ssh_client_tab_name">SSH client</string>
     <string name="warning_title">Warning</string>
+    <string name="sample_text">lorem ipsum</string>
 </resources>

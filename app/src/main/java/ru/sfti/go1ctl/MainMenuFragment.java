@@ -1,5 +1,6 @@
 package ru.sfti.go1ctl;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -34,11 +36,7 @@ public class MainMenuFragment extends Fragment {
         "SSH Client"
     };
 
-    private TabLayout _tabLayout;
-    private ViewPager2 _viewPager;
-
-    private NavHostFragment _boardNavHostFragment;
-    private LevelSelectionFragment _levelSelectionFragment;
+    private ControlBoardFragment _controlBoard;
     private SshClientFragment _sshClientFragment;
 
 
@@ -50,21 +48,25 @@ public class MainMenuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         this._binding = FragmentMainMenuBinding.inflate(getLayoutInflater());
     }
 
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = this._binding.getRoot();
-        Activity a = (Activity) v.getContext();
+                             Bundle savedInstanceState)
+    {
+        this._sshClientFragment = new SshClientFragment();
+        this._controlBoard = new ControlBoardFragment();
 
         // Set up tabs
-        FragmentStateAdapter _viewPagerAdapter =
-                new PagerAdapter((FragmentActivity) a);
+        FragmentStateAdapter _viewPagerAdapter = new PagerAdapter(
+                requireActivity(), this._sshClientFragment, this._controlBoard
+        );
 
         this._binding.mainViewPager.setAdapter(_viewPagerAdapter);
+        this._binding.mainViewPager.setUserInputEnabled(false);
 
         new TabLayoutMediator(
                 this._binding.mainTabLayout,
@@ -72,22 +74,31 @@ public class MainMenuFragment extends Fragment {
                 (tab, pos) -> tab.setText(_TAB_NAMES[pos]))
                 .attach();
 
-        return v;
+        return this._binding.getRoot();
     }
 
 
     private static class PagerAdapter
         extends FragmentStateAdapter
     {
-        public PagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+
+        private final ControlBoardFragment _controlBoard;
+        private final SshClientFragment _sshClientFragment;
+
+        public PagerAdapter(@NonNull FragmentActivity fragmentActivity,
+                            SshClientFragment sshClient,
+                            ControlBoardFragment controlBoard) {
             super(fragmentActivity);
+
+            this._sshClientFragment = sshClient;
+            this._controlBoard = controlBoard;
         }
 
         @NonNull
         @Override
         public Fragment createFragment(int pos) {
-            if (pos == 1) return new SshClientFragment();
-            else          return new ControlBoardFragment();
+            if (pos == 1) return this._sshClientFragment;
+            else          return this._controlBoard;
         }
 
         @Override

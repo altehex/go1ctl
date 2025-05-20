@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,17 +13,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.IOException;
+
 import ru.sfti.go1ctl.databinding.FragmentMiniGamepadButtonContainerBinding;
-import ru.sfti.go1ctl.sbk_java.SbkHighCtrlMessage;
-import ru.sfti.go1ctl.sbk_java.SbkHighUdpSocket;
+import ru.sfti.go1ctl.sbk_java.SbkUdpSocket;
+import ru.sfti.go1ctl.util.SbkUdpSocketViewModel;
 
 
-public class MiniGamepadButtonContainerFragment extends Fragment {
+public class MiniGamepadButtonContainerFragment
+        extends Fragment
+{
     private static final String _TAG = "MiniGamepadButtonContainerFragment";
 
     private FragmentMiniGamepadButtonContainerBinding _binding;
 
-    private SbkHighUdpSocket _socket;
+    private SbkUdpSocketViewModel _socketViewModel;
+    private SbkUdpSocket _socket;
 
     private KeyHandlerThread _keyHandler;
 
@@ -36,9 +42,15 @@ public class MiniGamepadButtonContainerFragment extends Fragment {
 
         this._binding = FragmentMiniGamepadButtonContainerBinding.inflate(getLayoutInflater());
 
-        this._socket = ((HighLevelFragment) this.getParentFragment()).getSocket();
+        this._socketViewModel = new ViewModelProvider(requireActivity())
+                .get(SbkUdpSocketViewModel.class);
+        this._socket = this._socketViewModel.get();
 
-        this._keyHandler = new KeyHandlerThread(this._socket);
+        try {
+            this._keyHandler = new KeyHandlerThread(this._socket);
+        } catch (InterruptedException | IOException e) {
+            Log.println(Log.ERROR, _TAG, "Failed to initialize high level connection: gamepad won't work");
+        }
         this._keyHandler.start();
     }
 
@@ -48,24 +60,24 @@ public class MiniGamepadButtonContainerFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState)
     {
-        this._binding.aButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                _keyHandler.aPressed = action == MotionEvent.ACTION_DOWN;
-                return true;
-            }
+        this._binding.aButton.setOnTouchListener((v, event) -> {
+            int action = event.getAction();
+            _keyHandler.aPressed = action == MotionEvent.ACTION_DOWN;
+            return true;
         });
 
-        this._binding.l2Button.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                _keyHandler.l2Pressed = action == MotionEvent.ACTION_DOWN;
-                return true;
-            }
+        this._binding.l2Button.setOnTouchListener((v, event) -> {
+            int action = event.getAction();
+            _keyHandler.l2Pressed = action == MotionEvent.ACTION_DOWN;
+            return true;
         });
 
         return this._binding.getRoot();
+    }
+
+
+    public void
+    close() {
+        this._keyHandler.finish();
     }
 }

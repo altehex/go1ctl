@@ -2,19 +2,60 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout"
+    android:id="@+id/no_connection_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NoConnectionFragment">
 
     <ImageButton
         android:id="@+id/connect_button"
-        android:layout_width="127dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="240dp"
+        android:layout_width="149dp"
+        android:layout_height="145dp"
+        android:layout_marginTop="236dp"
+        android:alpha="0"
         android:contentDescription="@string/connect_button_desc"
-        android:src="@drawable/ic_launcher_background"
+        android:src="?android:attr/fastScrollTrackDrawable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="222dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="monospace"
+        android:text="GO1CTRL"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connect_button" />
+
+    <TextView
+        android:id="@+id/title_prompt_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="Press the button above to connect"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_text"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="225dp"
+        android:layout_height="214dp"
+        android:src="@drawable/antu_network_wireless_connected_75_svg"
+        app:layout_constraintBottom_toTopOf="@+id/title_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

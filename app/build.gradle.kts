@@ -6,6 +6,7 @@ plugins {
 android {
     namespace = "ru.sfti.go1ctl"
     compileSdk = 35
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "ru.sfti.go1ctl"
@@ -36,6 +37,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packaging {
+        resources.excludes.add("META-INF/MANIFEST.MF")
+        resources.excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+    }
 }
 
 dependencies {
@@ -49,7 +55,13 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
+    implementation(libs.sshj)
+    implementation(libs.terminal.emulator)
+    implementation(libs.listenablefuture)
+    implementation(libs.termux.shared)
+    implementation(libs.terminal.view)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+

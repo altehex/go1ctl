@@ -6,7 +6,7 @@ import androidx.navigation.NavController;
 
 public class OnClickRouteListener implements View.OnClickListener {
     private final NavController _navCtrl;
-    private int _route;
+    private final int _route;
 
     public OnClickRouteListener(NavController navCtrl, int route) {
         this._navCtrl = navCtrl;

@@ -3,6 +3,7 @@ package ru.sfti.go1ctl.sbk_java;
 import androidx.annotation.NonNull;
 
 import java.net.DatagramPacket;
+import java.nio.ByteBuffer;
 
 public abstract class SbkMessage {
     private String _TAG = "SbkMessage";
@@ -18,6 +19,19 @@ public abstract class SbkMessage {
 
     protected DatagramPacket _packet;
     protected byte[]         _packetBuffer;
+
+    protected byte[] _bytes;
+
+    protected ByteBuffer _dword;
+    protected ByteBuffer _short;
+
+
+    public SbkMessage(int size) {
+        this._packetBuffer = new byte[size];
+
+        this._dword = ByteBuffer.allocate(4);
+        this._short = ByteBuffer.allocate(2);
+    }
 
 
     @NonNull

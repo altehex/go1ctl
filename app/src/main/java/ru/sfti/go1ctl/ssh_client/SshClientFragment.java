@@ -8,59 +8,86 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ru.sfti.go1ctl.R;
+import com.termux.shared.terminal.TermuxTerminalSessionClientBase;
+import com.termux.shared.terminal.TermuxTerminalViewClientBase;
+import com.termux.terminal.TerminalEmulator;
+import com.termux.terminal.TerminalOutput;
+import com.termux.terminal.TerminalSession;
+import com.termux.terminal.TerminalSessionClient;
+import com.termux.view.TerminalView;
+import com.termux.view.TerminalViewClient;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SshClientFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import ru.sfti.go1ctl.databinding.FragmentSshClientBinding;
+
+
 public class SshClientFragment extends Fragment {
+    private FragmentSshClientBinding _binding;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private SshManager _sshManager;
+    private SshClientUpdateThread _updateThread;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private TerminalViewClient _termClient;
+
 
     public SshClientFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SshClientFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SshClientFragment newInstance(String param1, String param2) {
-        SshClientFragment fragment = new SshClientFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+        this._binding = FragmentSshClientBinding.inflate(getLayoutInflater());
+
+        this._termClient = new TermuxTerminalViewClientBase();
+        this._binding.sshClientTerminalEmulator.setTerminalViewClient(this._termClient);
+
+        //this._termClient.
+
+        this._sshManager = new SshManager(8192);
+        this._sshManager.sshConnect();
+        ;
+
+        this._updateThread = new SshClientUpdateThread(this);
+        this._updateThread.start();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ssh_client, container, false);
+
+        return this._binding.getRoot();
+    }
+
+
+    private class SshClientUpdateThread
+        extends Thread
+    {
+        private SshClientFragment _parent;
+
+
+        public SshClientUpdateThread(SshClientFragment parent)
+        {
+            this._parent = parent;
+        }
+
+
+        public void
+        run()
+        {
+            byte[] buf;
+            SshManager manager;
+            TerminalView termView;
+
+            manager = this._parent._sshManager;
+            termView = this._parent._binding.sshClientTerminalEmulator;
+
+            if (termView.mEmulator == null) return;
+
+            while ( ! manager.isSessionFinished()) {
+                buf = manager.getBuffer();
+                ;
+            }
+        }
     }
 }

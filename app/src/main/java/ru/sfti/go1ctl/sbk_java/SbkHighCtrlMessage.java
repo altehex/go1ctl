@@ -35,8 +35,6 @@ public class SbkHighCtrlMessage
 
         _eulerCached = new float[3];
         _velocityCached = new float[2];
-
-        this._updateCrc32();
     }
 
 
@@ -46,15 +44,15 @@ public class SbkHighCtrlMessage
     }
 
 
+    public void
+    setGait(SbkGaitEnum gait) { this._packetBuffer[_GAIT_OFF] = (byte) gait.ordinal(); }
+
+
     private void
     _setVelocity(float v, int off)
     {
-        byte[] v32 = this._floatToFloat32(v);
-
-        this._packetBuffer[_VELOCITY_OFF+off]   = v32[3];
-        this._packetBuffer[_VELOCITY_OFF+off+1] = v32[2];
-        this._packetBuffer[_VELOCITY_OFF+off+2] = v32[1];
-        this._packetBuffer[_VELOCITY_OFF+off+3] = v32[0];
+        this._copy(v, _VELOCITY_OFF+off);
+        this._update = true;
     }
 
     public void
@@ -80,5 +78,59 @@ public class SbkHighCtrlMessage
     {
         this.setVelocityX(vx);
         this.setVelocityY(vy);
+    }
+
+
+    public void
+    setYawSpeed(float yaw)
+    {
+        if (yaw != this._yawSpeedCached) {
+            this._copy(yaw, _YAW_SPEED_OFF);
+            this._yawSpeedCached = yaw;
+            this._update = true;
+        }
+    }
+
+
+    public void
+    setEuler(float x, SbkAxisEnum axis)
+    {
+        int i = axis.ordinal();
+
+        if (x != this._eulerCached[i]) {
+            this._copy(x, _EULER_OFF+4*i);
+            this._eulerCached[i] = x;
+            this._update = true;
+        }
+    }
+
+    public void
+    setEuler(float roll, float pitch, float yaw)
+    {
+        this.setEuler(roll, SbkAxisEnum.ROLL);
+        this.setEuler(pitch, SbkAxisEnum.PITCH);
+        this.setEuler(yaw, SbkAxisEnum.YAW);
+    }
+
+
+    public void
+    setBodyHeight(float h)
+    {
+        if (h != this._bodyHeightCached) {
+            this._copy(h, _BODY_HEIGHT_OFF);
+            this._bodyHeightCached = h;
+            this._update = true;
+        }
+    }
+
+
+    public void
+    setFootHeight(float h)
+    {
+        if (h != this._footHeightCached) {
+            this._copy(h, _FOOT_HEIGHT_OFF);
+            this._footHeightCached = h;
+            this._update = true;
+        }
     }
 }

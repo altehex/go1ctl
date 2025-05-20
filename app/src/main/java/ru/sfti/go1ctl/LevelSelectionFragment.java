@@ -21,6 +21,7 @@ import ru.sfti.go1ctl.low_level.LowLevelFragment;
 import ru.sfti.go1ctl.util.OnClickListenerNavCtrl;
 import ru.sfti.go1ctl.util.OnClickRouteListener;
 
+
 public class LevelSelectionFragment extends Fragment
 {
     private FragmentLevelSelectionBinding _binding;
@@ -59,8 +60,9 @@ public class LevelSelectionFragment extends Fragment
                     @Override
                     public void onClick(View v) {
                         if ( ! _connectionConfirmed) {
-                            WarningDialogFragment warnDialog = new WarningDialogFragment((LevelSelectionFragment) _parent);
-                            warnDialog.show(getActivity().getSupportFragmentManager(), "warn_low");
+                            WarningDialogFragment warnDialog =
+                                    new WarningDialogFragment((LevelSelectionFragment) _parent);
+                            warnDialog.show(requireActivity().getSupportFragmentManager(), "warn_low");
                         }
 
                         if (_connectionConfirmed)
@@ -90,18 +92,8 @@ public class LevelSelectionFragment extends Fragment
             LayoutInflater inflater = requireActivity().getLayoutInflater();
 
             builder.setView(inflater.inflate(R.layout.fragment_low_level_connetion_warning_dialog, null))
-                    .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            _lsFrag._connectionConfirmed = true;
-                        }
-                    })
-                    .setNegativeButton("Return", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            _lsFrag._connectionConfirmed = false;
-                        }
-                    });
+                    .setPositiveButton("Continue", (dialog, which) -> _lsFrag._connectionConfirmed = true)
+                    .setNegativeButton("Return",   (dialog, which) -> _lsFrag._connectionConfirmed = false);
 
             return builder.create();
         }

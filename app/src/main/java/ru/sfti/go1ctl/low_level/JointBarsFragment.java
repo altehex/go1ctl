@@ -1,4 +1,4 @@
-package ru.sfti.go1ctl.util;
+package ru.sfti.go1ctl.low_level;
 
 import android.os.Bundle;
 
@@ -12,10 +12,10 @@ import ru.sfti.go1ctl.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link PacketFieldView#newInstance} factory method to
+ * Use the {@link JointBarsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PacketFieldView extends Fragment {
+public class JointBarsFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +26,7 @@ public class PacketFieldView extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public PacketFieldView() {
+    public JointBarsFragment() {
         // Required empty public constructor
     }
 
@@ -36,11 +36,11 @@ public class PacketFieldView extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment PacketFieldView.
+     * @return A new instance of fragment JointBarsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PacketFieldView newInstance(String param1, String param2) {
-        PacketFieldView fragment = new PacketFieldView();
+    public static JointBarsFragment newInstance(String param1, String param2) {
+        JointBarsFragment fragment = new JointBarsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,6 +61,6 @@ public class PacketFieldView extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_packet_field_view, container, false);
+        return inflater.inflate(R.layout.fragment_joint_bars, container, false);
     }
 }

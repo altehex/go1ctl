@@ -14,6 +14,8 @@ public class GamepadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.activity_gamepad);
     }
 }
